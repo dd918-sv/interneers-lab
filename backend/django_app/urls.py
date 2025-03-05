@@ -25,12 +25,7 @@ def bmi(request):
     
     height=height[0:-2]
     weight=weight[0:-2]
-    for h in height:
-        if h.isnumeric()==False and h!='.':
-            return JsonResponse({"error":"Bruh! How come height's numeric value contain a non-numeric character in between!!"},status=400)
-    for w in weight:
-        if w.isnumeric()==False:
-            return JsonResponse({"error":"Bruh! How come weight's numeric value contain a non-numeric character in between!!"},status=400)
+    
     try:
         height=float(height)
     except:

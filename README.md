@@ -306,24 +306,97 @@ Open your Django project’s `urls.py` (or `views.py`, depending on your structu
 
 from django.contrib import admin
 from django.urls import path
+from django.http import HttpResponse
 from django.http import JsonResponse
 
-def hello_name(request):
-    """
-    A simple view that returns 'Hello, {name}' in JSON format.
-    Uses a query parameter named 'name'.
-    """
-    # Get 'name' from the query string, default to 'World' if missing
-    name = request.GET.get("name", "World")
-    return JsonResponse({"message": f"Hello, {name}!"})
+def hello_world(request):
+    name=request.GET.get("name","World")
+    return JsonResponse({"message":f"Hello,{name}!"})
+
+def bmi(request):
+    name=request.GET.get("name")
+    height=request.GET.get("height_in_ft")
+    weight=request.GET.get("weight_in_kg")
+    if name==None:
+        return JsonResponse({"error":"Please provide a name"},status=400)
+    if height==None:
+        return JsonResponse({"error":f"Hi {name}.Please provide a height"},status=400)
+    if weight==None:
+        return JsonResponse({"error":f"Hi {name}.Please provide a weight"},status=400)
+    
+    if height[-2:]!="ft":
+        return JsonResponse({"error":f"{height[-2:0]} Hi {name}.Please provide height in ft with ft as suffix after actual value"},status=400)
+    if weight[-2:]!='kg':
+        return JsonResponse({"error":f"Hi {name}.Please provide weight in kg with kg as suffix after actual value"},status=400)
+    
+    height=height[0:-2]
+    weight=weight[0:-2]
+    
+    try:
+        height=float(height)
+    except:
+        return JsonResponse({"error":"Please provide a valid height"},status=400)
+    try:
+        weight=float(weight)
+    except:
+        return JsonResponse({"error":"Please provide a valid weight"},status=400)
+
+    height=height*0.3048
+    bmi=weight/(height*height)
+    bmi=round(bmi,2)
+
+    if bmi<18.5:
+        return JsonResponse({"message":f"Hello,{name}! Your BMI is {bmi}. You are underweight. Excercise and eat healthy."})
+    elif bmi>=18.5 and bmi<24.9:
+        return JsonResponse({"message":f"Hello,{name}! Your BMI is {bmi}. You are healthy."})
+    else:
+        return JsonResponse({"message":f"Hello,{name}! Your BMI is {bmi}.You are overweight. Excercise and eat healthy."})
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('hello/', hello_name), 
-    # Example usage: /hello/?name=Bob
-    # returns {"message": "Hello, Bob!"}
+    path('hello/', hello_world),
+    path('bmi/', bmi),
 ]
 
+```
+
+## Different test cases for the API:
+
+# A) Valid Test Cases (Expected to return BMI)
+   bmi/?name=Bob&height_in_ft=5.9ft&weight_in_kg=57kg
+
+```
+{
+  "message": "Hello,Bob! Your BMI is 17.63. You are underweight. Excercise and eat healthy."
+}
+```
+
+#  B) Invalid Test cases (Expected to return Errors)
+
+   1) A parameter of GET request is missing 
+   (bmi/?name=Bob&height_in_ft=5.9ft)
+   
+```
+{
+  "error": "Hi Bob.Please provide a weight"
+}
+```
+   2) Wrong format of a parameter
+   (bmi/?name=Bob&height_in_ft=5.9&weight_in_kg=57kg)
+
+```
+{
+  "error": " Hi Bob.Please provide height in ft with ft as suffix after actual value"
+}
+```
+   3) Height or Weight is invalid
+   (bmi/?name=Bob&height_in_ft=5a.9ft&weight_in_kg=57kg)
+
+```
+{
+  "error": "Please provide a valid height"
+}
 ```
 ---
 #### 2. Run the Django Server

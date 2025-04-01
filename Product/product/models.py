@@ -11,7 +11,10 @@ class Product(Document):
     quantity=IntField(min_value=0,null=True)
     created_at=DateTimeField(default=datetime.now)
     updated_at=DateTimeField(default=datetime.now)
-    meta={'collection':'products'}
+    meta={'collection':'products',
+          'indexes':['name']
+          }
+    
     
     def __str__(self):
         return self.name

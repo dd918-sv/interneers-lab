@@ -9,10 +9,9 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-# Run Migrations
+# Command to use mongo using docker
 ```
-python3 manage.py makemigrations product
-python3 manage.py migrate
+docker-compose up -d
 ```
 
 # Run server

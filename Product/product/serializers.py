@@ -1,5 +1,5 @@
 from rest_framework_mongoengine.serializers import DocumentSerializer
-from .models import Product
+from .models import Product, ProductCategory
 
 class ProductSerializer(DocumentSerializer):
     class Meta:
@@ -9,3 +9,8 @@ class ProductSerializer(DocumentSerializer):
         ordering=['-created_at']
         verbose_name='Product'
         verbose_name_plural='Products'
+
+class ProductCategorySerializer(DocumentSerializer):
+    class Meta:
+        model=ProductCategory
+        fields='__all__'

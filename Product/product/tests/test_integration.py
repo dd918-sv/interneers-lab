@@ -1,8 +1,8 @@
 import unittest
 from django.test import TestCase
 from mongoengine import connect, disconnect
-from product.models import Product, ProductCategory
-from product.seed import seed_data
+from ..models import Product, ProductCategory
+from ..seed import seed_data
 import os
 import django
 

@@ -2,13 +2,13 @@ import unittest
 
 def run_unit_tests():
     loader = unittest.TestLoader()
-    suite = loader.discover(start_dir='.', pattern='*_tests.py')
+    suite = loader.loadTestsFromNames(['product.tests.test_category', 'product.tests.test_product'])
     runner = unittest.TextTestRunner(verbosity=2)
     return runner.run(suite)
 
 def run_integration_tests():
     loader = unittest.TestLoader()
-    suite = loader.loadTestsFromName('product.integration_tests')
+    suite = loader.loadTestsFromName('product.tests.test_integration')
     runner = unittest.TextTestRunner(verbosity=2)
     return runner.run(suite)
 

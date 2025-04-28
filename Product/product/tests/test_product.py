@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from .services import ProductService
-from .models import Product
+from ..services import ProductService
+from ..models import Product
 from mongoengine import connect,disconnect
 import os
 import django

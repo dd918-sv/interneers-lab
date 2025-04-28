@@ -10,6 +10,13 @@ class ProductRepository:
     
     def find_by_name(self,product_name):
         return Product.objects.get(name=product_name)
+    
+    def find_by_categoryID(self,categoryID):
+        try:
+            category_instance=ProductCategory.objects.get(id=categoryID)
+        except ProductCategory.DoesNotExist:
+            return {"success":False,"error":"Category not found"}
+        return Product.objects.filter(category=categoryID)
 
     def create_product(self,serializer):
         serializer.save()

@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-xq6dn0d0-7=y%5ritd1^(17z$(ezx=*b7%!xrq-y_@da47$l5a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.pythonanywhere.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.pythonanywhere.com','testserver']
 
 
 # Application definition
@@ -41,6 +41,16 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_mongoengine"
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

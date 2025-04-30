@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product List</title>
+    <link rel="stylesheet" type="text/css" href={% static 'product/stylesheets/list.css' %}>
+</head>
+<body>
+    <h1>Product List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in page_obj %}
+            <tr id=`{{product.id}}`>
+                <td>{{ product.id }}</td>
+                <td>{{ product.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <li><a href="?page=1">&laquo; first</a></li>
+            <li><a href="?page={{ page_obj.previous_page_number }}">previous</a></li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <li class="active"><a href="?page={{ num }}">{{ num }}</a></li>
+            {% else %}
+                <li><a href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}">next</a></li>
+            <li><a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a></li>
+        {% endif %}
+    </div>
+
+    <p>Showing  {{ page_obj.start_index }}-{{ page_obj.end_index }}  of {{ page_obj.paginator.count }} products</p>
+    
+    <div class="over-flow" style="display: none;">
+        <div class="over-flow-content">
+            <h2>Product Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Brand</th>
+                        <th>Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="product-id"></td>
+                        <td id="product-name"></td>
+                        <td id="product-description"></td>
+                        <td id="product-price"></td>
+                        <td id="product-brand"></td>
+                        <td id="product-category"></td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
+
+</body>
+<script>
+    const rows = document.querySelectorAll('tbody tr:not(.over-flow tr)');
+    rows.forEach(row => {
+        row.addEventListener('click', () => {
+            const productID=row.id;
+            const baseUrl = `/products/`;
+            const params = new URLSearchParams({
+                id: productID.slice(1,-1),
+            });
+            const url = `${baseUrl}?${params.toString()}`;
+            console.log('url:', url);
+            fetch(`${baseUrl}?${params.toString()}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('api_repsonse:', data);
+                    document.getElementById('product-id').innerText = data['id'];
+                    document.getElementById('product-name').innerText = data['name'];
+                    document.getElementById('product-description').innerText = data['description'];
+                    document.getElementById('product-price').innerText = data['price'];
+                    document.getElementById('product-brand').innerText = data['brand'];
+                    document.getElementById('product-category').innerText = data['category-title'];
+                    document.querySelector('.over-flow').style.display = 'block';
+                    document.querySelector('.over-flow-content').style.display = 'block';
+                })
+                .catch(error => console.error(error));
+        })
+    })
+</script>
+
+</html>

@@ -105,6 +105,9 @@ class ProductCategoryService:
 
     def get_category_by_name(self,category_name):
         return self.repository.find_by_name(category_name)
+    
+    def get_category_by_id(self,category_id):
+        return self.repository.find_by_ID(category_id)
 
         
     def update_category(self,category):

@@ -63,6 +63,17 @@ class ProductCategoryRepository:
                 return {"success":False,"error":"Category not found"}
         except Exception as e:
             return {"success":False,"error": str(e)}
+        
+    def find_by_ID(self,category_id):
+        try:
+            category_instance= ProductCategory.objects.get(id=category_id)
+            if category_instance:
+                serializer=ProductCategorySerializer(category_instance)
+                return {"success":True,"data":serializer.data}
+            else:
+                return {"success":False,"error":"Category not found"}
+        except Exception as e:
+            return {"success":False,"error": str(e)}
     
     def create_product_category(self,serializer):
         try:

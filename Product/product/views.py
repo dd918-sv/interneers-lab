@@ -18,13 +18,22 @@ def home(request):
 #################### PRODUCT CRUD OPERATIONS ####################
 
 def product_list(request):
-    products=product_service.list_products()
-    paginator=ProductPagination()
-    result_page=paginator.paginate_queryset(list(products),request)
-    if result_page is not None: 
-        serializer=ProductSerializer(result_page,many=True)
+    products = product_service.list_products()
+    paginator = ProductPagination()
+    result_page = paginator.paginate_queryset(list(products), request)
+    serializer = ProductSerializer(result_page if result_page is not None else products, many=True)
+    
+    if request.accepted_renderer.format == 'html' or 'text/html' in request.META.get('HTTP_ACCEPT', ''):
+        result=serializer.data
+        context = {
+            'products': result,
+            'page_obj': paginator.page,  # The paginated page object
+            'paginator': paginator,   # The paginator instance
+        }
+        return render(request, 'product/product_list.html', context)
+    
+    if result_page is not None:
         return paginator.get_paginated_response(serializer.data)
-    serializer=ProductSerializer(products,many=True)
     return Response(serializer.data)
 
 def product_detail_by_id(request):
@@ -35,6 +44,9 @@ def product_detail_by_id(request):
     if "error" in product:
         return Response(product['error'], status=status.HTTP_404_NOT_FOUND)
     elif product["success"]:
+        result=product_category_service.get_category_by_id(product['data']['category'])
+        print(product['data']['category'])
+        product['data']['category-title']=result['data']['title']
         return Response(product['data'], status=status.HTTP_200_OK)
     else:
         return Response(product['error'], status=status.HTTP_400_BAD_REQUEST)
@@ -91,12 +103,13 @@ def get_products_by_category(request):
 def product_handler(request):
     if request.method == 'GET':
         if request.query_params.get('id') is not None:
+            # print("id present in params")
             return product_detail_by_id(request)
         elif request.query_params.get('name') is not None:
             return product_detail_by_name(request)
         elif request.query_params.get('category') is not None:
             return get_products_by_category(request)
-        elif not request.query_params:
+        elif (not request.query_params) or (request.query_params.get('page') is not None):
             return product_list(request)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)

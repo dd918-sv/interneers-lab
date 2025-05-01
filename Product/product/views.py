@@ -23,18 +23,24 @@ def product_list(request):
     result_page = paginator.paginate_queryset(list(products), request)
     serializer = ProductSerializer(result_page if result_page is not None else products, many=True)
     
+    result=serializer.data
+    context = {
+        'products': serializer.data,
+        'current_page': paginator.page.number,
+        'total_pages': paginator.page.paginator.num_pages,
+        'total_items': paginator.page.paginator.count,
+        'next_page': paginator.get_next_link(),
+        'previous_page': paginator.get_previous_link(),
+    }
     if request.accepted_renderer.format == 'html' or 'text/html' in request.META.get('HTTP_ACCEPT', ''):
-        result=serializer.data
-        context = {
-            'products': result,
-            'page_obj': paginator.page,  # The paginated page object
-            'paginator': paginator,   # The paginator instance
-        }
+        context['page_obj'] = paginator.page
+        context['paginator'] = paginator
         return render(request, 'product/product_list.html', context)
+        
     
     if result_page is not None:
-        return paginator.get_paginated_response(serializer.data)
-    return Response(serializer.data)
+        return Response(context)
+    return Response({'products':serializer.data})
 
 def product_detail_by_id(request):
     id=request.query_params.get('id')
@@ -45,7 +51,7 @@ def product_detail_by_id(request):
         return Response(product['error'], status=status.HTTP_404_NOT_FOUND)
     elif product["success"]:
         result=product_category_service.get_category_by_id(product['data']['category'])
-        print(product['data']['category'])
+        # print(product['data']['category'])
         product['data']['category-title']=result['data']['title']
         return Response(product['data'], status=status.HTTP_200_OK)
     else:

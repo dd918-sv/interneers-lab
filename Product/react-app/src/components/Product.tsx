@@ -5,6 +5,7 @@ interface ProductProps {
     name: string;
     id: string;
     description: string;
+    quantity: number;
     price: number;
     brand?: string;
     "category-title"?: string;
@@ -20,7 +21,7 @@ const Product = ({ product, isSummary }: ProductProps) => {
       {isSummary ? (
         <>
           <h3>{product.name}</h3>
-          <p>ID: {product.id}</p>
+          <p>Quantity: {product.quantity}</p>
           <p>Price: ${product.price}</p>
         </>
       ) : (
@@ -31,6 +32,9 @@ const Product = ({ product, isSummary }: ProductProps) => {
           </p>
           <p>
             <strong>Description:</strong>${product.description}
+          </p>
+          <p>
+            <strong>Quantity:</strong>{product.quantity}
           </p>
           <p>
             <strong>Price:</strong>${product.price}

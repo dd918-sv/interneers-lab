@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate} from 'react-router-dom';
 import Product from "./Product";
 import "./ProductList.css";
+import Loader from "./Loader";
 const URL_BASE = "http://localhost:8000";
 
 interface ProductProp {
@@ -8,6 +10,7 @@ interface ProductProp {
   id: string;
   description: string;
   price: number;
+  quantity: number;
   brand?: string;
   "category-title"?: string;
 }
@@ -21,15 +24,22 @@ const ProductList = () => {
   const [selectedProduct, setSelectedProduct] = useState<ProductProp | null>(
     null
   );
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
+        setError(null);
+        await new Promise(resolve => setTimeout(resolve, 50));
         const response = await fetch(`${URL_BASE}/products/?page=${page}`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-        const data = await response.json();
+        const data = await response.json().catch((err) => {
+          console.error(err);
+          throw err;
+      });
         setProducts(data.products || data);
         setTotalPages(data.total_pages || 1);
         setLoading(false);
@@ -54,8 +64,8 @@ const ProductList = () => {
         throw new Error("Failed to fetch product details");
       }
       const productData = await response.json();
-      console.log(productData);
-      setSelectedProduct(productData);
+      // console.log(productData);
+      setSelectedProduct(productData['data']);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -67,7 +77,11 @@ const ProductList = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  const handleUpdate = async (productId:string) => {
+    navigate(`/products/update/${productId}`);
+  };
+
+  if (loading) return <Loader/>;
   if (error) return <div>Error...:{error}</div>;
 
   return (
@@ -87,8 +101,9 @@ const ProductList = () => {
 
       {selectedProduct && (
         <div className="product-detail">
-          <button onClick={() => setSelectedProduct(null)}>Close</button>
+          <button id="close-btn" onClick={() => setSelectedProduct(null)}>Close</button>
           <Product product={selectedProduct} isSummary={false} />
+          <button id="update-btn" onClick={() => handleUpdate(selectedProduct.id)}>Update</button>
         </div>
       )}
       <div className="pagination">

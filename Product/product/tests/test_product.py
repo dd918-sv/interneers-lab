@@ -91,10 +91,10 @@ class TestProductService(unittest.TestCase):
     def test_get_product_by_categoryID(self, MockProductRepository):
         mock_repository = MagicMock()
         MockProductRepository.return_value = mock_repository
-        mock_repository.find_by_categoryID.return_value = [
+        mock_repository.find_by_categoryID.return_value ={'success':True,'data': [
             Product(name="Product1", price='10.0', category='70262a23e572822bb117a9b6', description='Description1'),
             Product(name="Product2", price='20.0', category='70262a23e572822bb117a9b6', description='Description2')
-        ]
+        ]}
         product_service = ProductService(repository=mock_repository)
         products = product_service.get_products_by_categoryID('70262a23e572822bb117a9b6')
         with self.subTest():

@@ -48,16 +48,18 @@ class ProductIntegrationTests(TestCase):
         
         response = client.get('/category/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data['results']), 2)
+        # print(response.data)
+        self.assertEqual(len(response.data['data']), 6)
         
         response = client.get('/products/')
         self.assertEqual(response.status_code, 200)
-        # print(response.data['products'])
-        self.assertEqual(len(response.data['products']), 2) 
+        print(response.data['total_items'])
+        self.assertEqual(response.data['total_items'],6) 
         
-        response = client.get('/products/?category=Category 1')
+        response = client.get('/products/?title=Category 1')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 4)  
+        print(response.data['total_items'])
+        self.assertEqual(response.data['total_items'], 3)  
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

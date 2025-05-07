@@ -1,0 +1,44 @@
+.update-box {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    max-width: 1200px;
+    padding: 20px;
+    background-color: rgb(23, 23, 23);
+}
+
+form {
+    justify-content: center;
+
+}
+
+form label {
+    display: block;
+    font-size: 1.5rem;
+    padding: 1rem;
+
+}
+form input {
+    font-size: 1rem;
+    margin-left: 2rem;
+    padding: 0.75rem;
+    border-radius: .75rem;
+}
+
+form input::selection {
+    background-color: rgb(240, 225, 225);
+    color: rgb(13, 14, 74);
+}
+
+form button {
+    font-size: 1rem;
+    padding: 0.75rem;
+    color: white;
+    background-color: rgb(13, 14, 74);
+}
+
+form button:hover {
+    transition: 0.7s;
+    background-color: rgb(9, 139, 179);
+    color: rgb(0, 0, 0);
+}

@@ -38,7 +38,7 @@ class ProductIntegrationTests(TestCase):
         self.assertIsNotNone(product.category)
         self.assertIsInstance(product.category, ProductCategory)
 
-    def test_api_flow(self):
+    def test_api_flow(self): 
         client = APIClient()
         client.login(username='root', password='rootpassword')
         
@@ -48,15 +48,18 @@ class ProductIntegrationTests(TestCase):
         
         response = client.get('/category/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data['results']), 2)
+        # print(response.data)
+        self.assertEqual(len(response.data['data']), 6)
         
         response = client.get('/products/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data['results']), 2) 
+        print(response.data['total_items'])
+        self.assertEqual(response.data['total_items'],6) 
         
-        response = client.get('/products/?category=Category 1')
+        response = client.get('/products/?title=Category 1')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data['results']), 2)  # 3 products in Category 1
+        print(response.data['total_items'])
+        self.assertEqual(response.data['total_items'], 3)  
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

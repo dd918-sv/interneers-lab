@@ -1,6 +1,6 @@
-from product.services import ProductService, ProductCategoryService
+from .services import ProductService, ProductCategoryService
 import logging
-from product.models import Product, ProductCategory
+from .models import Product, ProductCategory
 
 logger = logging.getLogger(__name__)
 

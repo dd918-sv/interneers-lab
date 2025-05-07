@@ -1,0 +1,53 @@
+*::after,*::before {
+    box-sizing: border-box;
+}
+
+.spinner {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    overflow: hidden;
+    position: relative;
+    top: 10rem;
+    left: 10rem;
+
+}
+
+.spinner-sector {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    border: 15px solid transparent;
+    mix-blend-mode: overlay;
+    animation: rotate var(--duration) var(--timing) infinite;
+    pointer-events: none;
+}
+
+.spinner-sector-red {
+    border-left-color: rgb(250, 105, 105);
+    --duration: 1.5s;
+    --timing: ease-in-out;
+}
+.spinner-sector-blue {
+    border-left-color: rgb(65, 177, 214);
+    --duration: 2s;
+    --timing: ease-in;
+}
+.spinner-sector-green {
+    border-left-color: rgb(120, 236, 120);
+    --duration: 2.5s;
+    --timing: ease-out;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

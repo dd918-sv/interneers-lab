@@ -9,14 +9,18 @@ class ProductRepository:
         return Product.objects.get(id=product_id)
     
     def find_by_name(self,product_name):
-        return Product.objects.get(name=product_name)
+        try:
+            product_instance= Product.objects.get(name=product_name)
+        except Product.DoesNotExist:
+            return {"success":False,"error":"Product not found"}
+        return {"success":True,'data':Product.objects.get(name=product_name)}
     
     def find_by_categoryID(self,categoryID):
         try:
             category_instance=ProductCategory.objects.get(id=categoryID)
         except ProductCategory.DoesNotExist:
             return {"success":False,"error":"Category not found"}
-        return Product.objects.filter(category=categoryID)
+        return {'success':True,'data':Product.objects.filter(category=categoryID)}
 
     def create_product(self,serializer):
         serializer.save()
@@ -37,7 +41,7 @@ class ProductRepository:
 class ProductCategoryRepository:
     def find_all_categories(self):
         try:
-            return ProductCategory.objects.all()
+            return {'success':True,'data':ProductCategory.objects.all()}
         except Exception as e:  
             return {"success":False,"error": str(e)}
 
@@ -102,7 +106,7 @@ class ProductCategoryRepository:
             category_instance=ProductCategory.objects.get(title=category_title)
             if category_instance:
                 category_instance.delete()
-                return {"success":True,"message":"Category deleted successfully"}
+                return {"success":True,"data":"Category deleted successfully"}
             else:
                 return {"success":False,"error":"Category not found"}
         except Exception as e:

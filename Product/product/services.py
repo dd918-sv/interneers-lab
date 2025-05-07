@@ -35,12 +35,12 @@ class ProductService:
     def get_products_by_categoryID(self,category_id):
         try:
             product_instance = self.repository.find_by_categoryID(category_id)
-            if product_instance:
-                return {"success":True,"data":product_instance}
+            if product_instance['success']:
+                return {"success":True,"data":product_instance['data']}
             else: 
-                return {"success":False,"error":"Product not found"}
+                return {"success":False,"error":"No Products found"}
         except DoesNotExist:
-            return {"success":False,"error": "Products not found"}
+            return {"success":False,"error": "Error occurred"}
 
     def create_product(self,product):       # Creates a product
         category_title=product['category']
@@ -64,10 +64,13 @@ class ProductService:
     def update_product(self,product):       # Updates a product     
         if 'quantity' in product and int(product['quantity'])<0:
             return {"success":False,"error":"Quantity cannot be negative"}
+        if 'price' in product and float(product['price'])<0:
+            return {"success":False,"error":"Price cannot be negative"} 
+
         existing_product=self.repository.find_by_name(product['name'])
-        if not existing_product:
+        if existing_product['success']==False:
             return {"success":False,"error":"Product not found"}
-        existing_category=ProductCategoryRepository().find_by_name(product['category'])
+        existing_category=ProductCategoryRepository().find_by_ID(product['category'])
         if existing_category['success']==False:
             return {"success":False,"error":"Category not found"}
         product['category']=existing_category['data']['id']
@@ -92,8 +95,7 @@ class ProductCategoryService:
     def create_product_category(self,category):
         serializer=ProductCategorySerializer(data=category)
         if serializer.is_valid():
-            self.repository.create_product_category(serializer)
-            return {"success":True,"data":serializer.data}
+            return self.repository.create_product_category(serializer)
         else:
             return {"success":False,"error":serializer.errors}
         
